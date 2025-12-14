@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drawing Prompt Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+
+        .prompt-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8em;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        .prompt-display.empty {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.3em;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 18px 45px;
+            font-size: 1.2em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: 600;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✏️ Drawing Prompt</h1>
+        <p class="subtitle">Get inspired with random drawing ideas</p>
+        
+        <div id="promptDisplay" class="prompt-display empty">
+            Click the button below for your first prompt!
+        </div>
+        
+        <button onclick="generatePrompt()">New Prompt</button>
+    </div>
+
+    <script>
+        const prompts = [
+            // Home & Room
+            "Your bed",
+            "Blinds on a window",
+            "Books on a shelf",
+            "Your furniture",
+            "A corner of a room",
+            "Your sink",
+            "A staircase",
+            "Jewelry on a table",
+            "A receipt",
+            "Your slippers",
+            "A picture frame",
+            "An electrical plug",
+            "Your robe",
+            "Your entryway",
+            "Your TV",
+            "A container",
+            "A trinket",
+            
+            // Clothing & Accessories
+            "A shoe",
+            "Fabric with texture",
+            "A button",
+            "A zipper",
+            "A glove",
+            "Stripes on clothing",
+            "Your closet",
+            "A pocket",
+            "Wrinkled clothes",
+            "A tie",
+            "A hat or cap",
+            "Glasses or sunglasses",
+            "Sandals",
+            "A pattern on fabric",
+            "Your most comfortable shoes",
+            "A sweater",
+            "Your socks",
+            
+            // Food & Kitchen
+            "Tacos",
+            "Dessert on a plate",
+            "An onion",
+            "A sandwich",
+            "A cookie",
+            "Chips in a bowl",
+            "Cereal",
+            "Noodles",
+            "A peach",
+            "Nuts",
+            "Your dinner",
+            "An egg",
+            "Juice in a glass",
+            "An apple",
+            "Pizza",
+            "A waffle",
+            "A condiment bottle",
+            "An eclair",
+            "Wine bottle and glass",
+            "Pie",
+            "Berries",
+            "BBQ food",
+            "Your coffee maker",
+            "A knife",
+            "A spoon",
+            "A cup or mug",
+            "Dirty dishes",
+            "Silverware",
+            "A beverage",
+            "Your kitchen table",
+            "A jar",
+            "Your breakfast",
+            "An appliance",
+            "A recipe card",
+            "A saucer",
+            "A box of food",
+            "A can of soup",
+            "Slice of toast",
+            "An onion cut in half",
+            "A box of cereal",
+            "A glass of water",
+            "A bottle of liquor",
+            "An ice cream cone",
+            "Spices",
+            "Whatever is on your kitchen counter",
+            "A vegetable",
+            "A fruit",
+            "A nut",
+            "A lemon",
+            "A sandwich",
+            "A piece of cake",
+            "A baked potato",
+            "A fork",
+            "Noodles on a plate",
+            "A cookie",
+            "A glass of juice",
+            "A soda can",
+            "Something with a shell or a seashell",
+            "A microwave oven",
+            "A jug or pitcher",
+            "A coffeepot",
+            "A teapot",
+            "Some toast",
+            "A bottle of water",
+            "A snack",
+            "The condiments on a restaurant table",
+            "A bowl",
+            
+            // Nature & Outdoors
+            "Weather outside your window",
+            "Brambles or thorny plants",
+            "Greenery",
+            "A canopy of trees",
+            "Fog",
+            "A branch",
+            "Waves",
+            "Shells",
+            "A nest",
+            "A sprout",
+            "Fire",
+            "Shade under a tree",
+            "Foliage",
+            "A flower",
+            "A view of nature",
+            "Wind-blown plants",
+            "A palm tree",
+            "A fence",
+            "Frosty scenery",
+            "A grove of trees",
+            "Part of a tree in detail",
+            "Wood grain",
+            "Something growing in your house",
+            "A houseplant",
+            "Rocks",
+            "A skyscape",
+            "Clouds",
+            "A tree in autumn",
+            "A landscape",
+            "Autumn leaves",
+            "A fall leaf",
+            "A twig",
+            "Apples",
+            "A pine or fir tree",
+            "Moss",
+            
+            // Animals
+            "Fur on an animal",
+            "A critter",
+            "Wings on a bird or insect",
+            "A paw",
+            "Bugs",
+            "A tail",
+            "Antlers",
+            "A sea creature",
+            "A worm",
+            "An owl",
+            "Your pet",
+            "A bee",
+            "A tiger",
+            "A crab",
+            "Tentacles",
+            "A seal",
+            "A dog doing its thing",
+            "An insect",
+            "A fish, dead or alive",
+            "A wild animal",
+            "A horse",
+            "A chicken",
+            "Three different birds",
+            "A cat chilling out",
+            "A butterfly",
+            
+            // Kitchen Items & Utensils
+            "Your coffee maker",
+            "A knife",
+            "A spoon",
+            "A cup",
+            "An apron",
+            "Breakfast on a plate",
+            "A saucer",
+            "A jar",
+            "Your most complicated appliance",
+            "A favorite cooking tool",
+            "Salt and pepper shakers",
+            "Scissors",
+            "A light bulb",
+            "A bowl",
+            "A shopping cart or basket",
+            "A spray bottle",
+            "A broom",
+            "A candle",
+            "A towel",
+            "A popped kernel of popcorn",
+            "A deck of cards",
+            "A trash or garbage can",
+            "A stapler",
+            "A tube of toothpaste",
+            
+            // Materials & Objects
+            "Wire",
+            "Plastic objects",
+            "A chain",
+            "Glass",
+            "Paper",
+            "Suede",
+            "Copper",
+            "Stone",
+            "Money",
+            "Slats",
+            "Something shiny",
+            "Tools",
+            "Boxes",
+            "A cord",
+            "Mail",
+            "An antique",
+            "A bicycle",
+            "A clock",
+            "Wool",
+            "A bucket",
+            "Your left hand",
+            "Your right hand",
+            "The contents of your bag or wallet",
+            "The view out the nearest window",
+            "Laundry",
+            "Your toothbrush",
+            "Contents of your medicine cabinet",
+            "What's under the sink",
+            "The dashboard of a car",
+            "What's under the hood of your car",
+            "A bus, inside or out",
+            "The lines on your palm",
+            "A vacuum cleaner",
+            "Your driver's license",
+            "The negative space of a chair",
+            "Three of your shirts",
+            "Your naked foot",
+            "Ten things in twenty minutes",
+            "A toilet",
+            "A reflection",
+            "Six shadows",
+            "Whatever's in front of you right now",
+            "Street signage",
+            "An old photo, edge to edge",
+            "The view through a door",
+            "Whatever is on your desk",
+            "Whatever is on your bedside",
+            "View from your bedroom",
+            "View from the toilet",
+            "A drawer",
+            "Plumbing",
+            "What you see when you wake up",
+            "A closeup",
+            "A crumpled piece of paper",
+            "Some instructions",
+            "Everything on a roof",
+            "A lamp",
+            "A purse, wallet or bag",
+            "Your watch or jewelry",
+            "Organized chaos - messy desk",
+            "Your telephone",
+            "A favorite tool",
+            "A musical instrument",
+            "View from a window",
+            "Something you've made",
+            "Something old or vintage",
+            "A piece of clothing",
+            "Your foot",
+            "A book",
+            "A chair",
+            "Something you collect",
+            "Something metallic",
+            "An eye",
+            "A bicycle or part of one",
+            "Some keys",
+            "A landmark of your city",
+            "Something china or ceramic",
+            "Your refrigerator",
+            "Your home's entryway",
+            "A doorknob",
+            "A self portrait",
+            "A picture frame and photo",
+            "An automobile or part",
+            "Your sink",
+            "Your nose",
+            "A fire hydrant",
+            "Your computer",
+            "A mailbox",
+            "A souvenir from travel",
+            "Your ear",
+            "A streetlight",
+            "Your art space",
+            "A body of water",
+            "Some bread",
+            "A store in your neighborhood",
+            "A traffic sign",
+            "Your lunch",
+            "A flag",
+            "A button or buttons",
+            "Something with wings",
+            "A brown paper bag",
+            "An egg carton",
+            "A bar of soap",
+            "A power plug",
+            "Exercise equipment",
+            "A clock",
+            "Something with flames",
+            "A fence",
+            "A flashlight",
+            "A coin or coins",
+            "A bell",
+            "A bird",
+            "A sponge",
+            "A view through a doorway",
+            "People doing something",
+            "School supplies",
+            "A chain",
+            "A peach",
+            "Something with a handle",
+            "An envelope",
+            "Something with bristles",
+            "An herb or spice",
+            "A nut (hardware)",
+            "Something in plastic wrapper",
+            "Steps or stairs",
+            "A kernel of popcorn",
+            "A trophy or award",
+            "A deck of cards",
+            "A camera",
+            "Front of your house",
+            "Your daily newspaper",
+            "A zipper",
+            "A bridge",
+            "A basket and contents",
+            "A park bench",
+            "A truck",
+            "A fan",
+            "A peanut in shell",
+            "A shaver or razor",
+            "Your color palette",
+            "Paper money",
+            "A remote control",
+            "Your toe",
+            "A stapler",
+            "A shadow",
+            "Underwear",
+            "A mirror image",
+            "Your thumb",
+            "An umbrella",
+            "A window",
+            "The moon",
+            "A handheld game",
+            "Your favorite drawing tool",
+            "A tote bag",
+            "A map",
+            "Your junk drawer",
+            "Last thing you bought",
+            "Your favorite drink",
+            "Palm of your hand",
+            "Under your bed",
+            "Something from first aid kit",
+            "A pencil",
+            "View from kitchen window",
+            "A figurine",
+            "A pillow",
+            "Oldest thing in fridge",
+            "Gloves",
+            "A lock",
+            "Perfume or scented product",
+            "A filled suitcase",
+            "Your shower or tub",
+            "Your floor",
+            "Your neighbor",
+            "Your grocery store",
+            "Your downtown",
+            "A shirt",
+            "A table",
+            "The condiments",
+            "Your hair in morning",
+            "Something with numbers",
+            "A garden tool",
+            "Something in your pocket",
+            "Something with buttons"
+        ];
+
+        function generatePrompt() {
+            const display = document.getElementById('promptDisplay');
+            const randomIndex = Math.floor(Math.random() * prompts.length);
+            const prompt = prompts[randomIndex];
+            
+            display.textContent = prompt;
+            display.classList.remove('empty');
+        }
+    </script>
+</body>
+</html>
